@@ -158,20 +158,10 @@ function selectCar(i){sel=i;openSec=null;renderCards();window.scrollTo({top:0,be
 function toggleSec(i){openSec=openSec===i?null:i;renderCards();}
 
 function imgHtml(src,label){
-  const id='img'+Math.random().toString(36).slice(2,8);
-  setTimeout(()=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    const img=el.querySelector('img');
-    if(img){
-      img.onload=()=>{el.querySelector('.loading')&&(el.querySelector('.loading').style.display='none');img.style.display='block'};
-      img.onerror=()=>{el.querySelector('.loading')&&(el.querySelector('.loading').style.display='none');el.querySelector('.fallback')&&(el.querySelector('.fallback').style.display='flex')};
-    }
-  },50);
-  return`<div class="photo-wrap" id="${id}">
+  return`<div class="photo-wrap">
     <div class="loading">loading…</div>
     <div class="fallback" style="display:none">${label==='Exterior'?'🚘':'🪑'}<span>${label}</span></div>
-    <img src="${src}" alt="${label}" style="display:none">
+    <img src="${src}" alt="${label}" style="display:none" onload="this.style.display='block';this.parentElement.querySelector('.loading').style.display='none'" onerror="this.parentElement.querySelector('.loading').style.display='none';this.parentElement.querySelector('.fallback').style.display='flex'">
     <div class="tag">${label}</div>
   </div>`;
 }
