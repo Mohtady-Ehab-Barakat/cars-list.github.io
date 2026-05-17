@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Every EV Under RM 120,000 in Malaysia · 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c1f;--card:#fff;--accent:#4f46e5;--muted:#8892b0;--border:#e8ecf4;--green:#059669;--red:#dc2626;--warn:#d97706}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:#1e1e2f;min-height:100vh}
+
+/* header */
+.site-hdr{background:linear-gradient(135deg,#0c0c1f 0%,#1a1a3e 100%);padding:20px 16px 0;position:sticky;top:0;z-index:100}
+.site-hdr h1{font-family:'Space Mono',monospace;font-size:15px;color:#fff;letter-spacing:-.3px}
+.site-hdr p{font-size:11px;color:var(--muted);margin-top:4px}
+.tabs{display:flex;gap:0;margin-top:14px}
+.tab-btn{flex:1;padding:10px 0;font-size:12px;font-weight:700;border:none;cursor:pointer;background:transparent;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s}
+.tab-btn.active{color:#fff;border-bottom-color:var(--accent);background:rgba(79,70,229,.1)}
+.tab-btn:hover{color:#c8d0f0}
+
+/* tab content */
+.tab-panel{display:none;padding:14px 12px 40px}
+.tab-panel.active{display:block;background:#eef0f7;min-height:80vh}
+
+/* === CARDS TAB === */
+.car-pills{display:flex;gap:6px;overflow-x:auto;padding:0 0 8px;-webkit-overflow-scrolling:touch}
+.car-pills::-webkit-scrollbar{display:none}
+.pill{flex-shrink:0;padding:5px 11px;border-radius:16px;border:none;cursor:pointer;font-size:10px;font-weight:700;font-family:'DM Sans';white-space:nowrap;background:#1c1c3a;color:#6b7db8;transition:all .15s}
+.pill.active{color:#fff}
+
+.card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 3px 18px rgba(0,0,0,.08);margin-bottom:14px}
+.card-hdr{padding:12px 14px 10px;display:flex;justify-content:space-between;align-items:flex-start}
+.card-hdr .lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;opacity:.65;color:#fff}
+.card-hdr .name{font-size:15px;font-weight:800;color:#fff;margin-top:2px;line-height:1.2}
+.card-hdr .price{font-size:17px;font-weight:800;color:#fff;text-align:right}
+.card-hdr .price small{display:block;font-size:8.5px;font-weight:400;opacity:.55}
+
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 8px 6px}
+.photo-wrap{position:relative;border-radius:8px;overflow:hidden;background:#dde1ea;aspect-ratio:16/10}
+.photo-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-wrap .tag{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.5);border-radius:4px;padding:1px 6px;color:#fff;font-size:9px;font-weight:700}
+.photo-wrap .loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa}
+.photo-wrap .fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#eef0f5;font-size:20px}
+.photo-wrap .fallback span{font-size:9px;color:#aaa;margin-top:3px}
+
+.qstats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.qstats>div{padding:7px 4px;text-align:center;border-right:1px solid var(--border)}
+.qstats>div:last-child{border-right:none}
+.qstats .ql{font-size:8.5px;color:#aaa;text-transform:uppercase}
+.qstats .qv{font-size:10.5px;font-weight:700;color:#111;margin-top:1px}
+
+.note-bar{padding:8px 12px;font-size:11px;line-height:1.55;border-bottom:1px solid var(--border)}
+.note-bar.warn{background:#fff8e1;color:#7a5800}
+.note-bar.star{background:#e8f5e9;color:#1b5e20}
+.note-bar.info{background:#f5f8ff;color:#374060}
+.ncap-bar{padding:6px 12px;font-size:11px;font-weight:700;border-bottom:1px solid var(--border)}
+.ncap-bar.bad{background:#fde8e8;color:#960000}
+.ncap-bar.good{background:#e8f5e9;color:#1b5e20}
+
+.acc-btn{width:100%;padding:10px 12px;background:#fff;border:none;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:'DM Sans';font-size:11.5px;font-weight:700;color:#111}
+.acc-btn.open{background:#f4f7ff}
+.acc-icon{font-size:14px;font-weight:700}
+.acc-body{background:#fafbff}
+.acc-row{display:flex;padding:6px 12px;border-bottom:1px solid #f2f2f2}
+.acc-row .ak{width:35%;font-size:10px;color:#999;flex-shrink:0}
+.acc-row .av{font-size:10.5px;color:#111;font-weight:500;line-height:1.4}
+
+.carlist{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.carlist-hdr{padding:10px 12px;background:var(--bg);color:#fff;font-size:11px;font-weight:700}
+.carlist-item{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #eee;cursor:pointer}
+.carlist-item.active{background:#eff2ff}
+.carlist-item:last-child{border-bottom:none}
+.carlist-thumb{width:46px;height:30px;border-radius:5px;overflow:hidden;background:#e8eaef;flex-shrink:0}
+.carlist-thumb img{width:100%;height:100%;object-fit:cover}
+.carlist-name{font-size:10.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.carlist-sub{font-size:9px;color:#aaa;margin-top:1px}
+.carlist-price{font-size:11.5px;font-weight:700;white-space:nowrap}
+
+/* === TABLE TAB === */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.tbl{border-collapse:collapse;min-width:max-content;font-size:10px;width:100%}
+.tbl th{padding:8px 8px;white-space:nowrap;background:#12122a;color:#c8d0e8;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;user-select:none;border-right:1px solid #1e1e3a;border-bottom:2px solid #2a2a50;position:sticky;top:0;z-index:2}
+.tbl th:hover{background:#1a1a44}
+.tbl td{padding:6px 8px;border-right:1px solid #eef;border-bottom:1px solid #eef;vertical-align:middle;background:#fff}
+.tbl tr:nth-child(even) td{background:#f8f9fc}
+.tbl tr:hover td{background:#f0f4ff}
+.tbl .sticky-col{position:sticky;left:0;z-index:5;background:inherit}
+.tbl .sticky-hdr{position:sticky;left:0;z-index:10;background:#0d0d22}
+.best-cell{background:rgba(5,150,105,.1) !important}
+.worst-cell{background:rgba(220,38,38,.08) !important}
+
+.footer{margin-top:10px;font-size:8.5px;color:#bbb;line-height:1.7;padding:0 2px}
+.legend{background:#fff;padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:12px;flex-wrap:wrap;font-size:8.5px;color:#666;border-radius:12px 12px 0 0}
+.legend-dot{width:10px;height:10px;border-radius:2px;border:1px solid #ddd;display:inline-block;vertical-align:middle;margin-right:3px}
+</style>
+</head>
+<body>
+<div class="site-hdr">
+  <h1>⚡ Every EV Under RM 120,000</h1>
+  <p>Malaysia 2026 · 20 variants · 8 brands · Complete specs & photos</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('cards')">🚗 Car Gallery</button>
+    <button class="tab-btn" onclick="switchTab('table')">📊 Comparison Table</button>
+  </div>
+</div>
+
+<div id="cards-panel" class="tab-panel active"></div>
+<div id="table-panel" class="tab-panel"></div>
+
+<script>
+const BC={Proton:"#1a3c8f",Perodua:"#c0392b",Wuling:"#6d28d9",BYD:"#003087",MG:"#b30000",Leapmotor:"#0f766e",GWM:"#216a4f",Neta:"#c0392b"};
+
+function px(u){return"https://wsrv.nl/?url="+encodeURIComponent(u)+"&w=500&h=320&fit=cover&output=webp"}
+
+const cars=[
+{model:"Proton e.MAS 5 Prime",price:"RM 59,800",pn:59800,brand:"Proton",body:"Hatchback",seats:5,drive:"RWD",power:"79 PS",torque:"130 Nm",bat:"30.12 kWh LFP",range:"225 km",std:"WLTP",z100:"N/A",top:"N/A",acC:"6.6 kW · 4.3 hrs",dcC:"30–80% 21 min",dcKW:"—",L:4135,W:1805,H:1580,wb:2650,gc:160,wh:"N/A",info:'14.6" + 8.8"',bags:6,v2l:"No",adas:"AEB, FCW, LDW, RCTA, 360° cam",warr:"5yr/100k · Batt 8yr/160k",col:"White, Silver, Grey",ncap:"—",note:"Malaysia's cheapest EV. RWD. 70L frunk + 375L boot.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/26/2600/proton-emas-5-69330.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/26/2600/proton-emas-5-69330.jpg")},
+{model:"Wuling Bingo Pro",price:"RM 67,800",pn:67800,brand:"Wuling",body:"Hatchback",seats:5,drive:"FWD",power:"68 PS",torque:"150 Nm",bat:"31.9 kWh LFP",range:"~270 km",std:"WLTP",z100:"N/A",top:"~130",acC:"7 kW · 4.5 hrs",dcC:"50 kW · 35 min",dcKW:"50",L:3950,W:1708,H:1580,wb:2560,gc:160,wh:'15" steel',info:'10.25"',bags:6,v2l:"No",adas:"ABS, EBD, ESC — no ADAS",warr:"5yr/150k · Batt 8yr/120k",col:"Neon Blue, White",ncap:"—",note:"Smallest EV in MY. CKD. 395L/1240L boot. Magic battery.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/188/2626/wuling-bingo-ev-front-angle-low-view-482357.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/188/2626/wuling-bingo-ev-front-angle-low-view-482357.jpg")},
+{model:"Proton e.MAS 5 Premium",price:"RM 72,800",pn:72800,brand:"Proton",body:"Hatchback",seats:5,drive:"RWD",power:"116 PS",torque:"150 Nm",bat:"40.16 kWh LFP",range:"325 km",std:"WLTP",z100:"N/A",top:"N/A",acC:"6.6 kW · 4.3 hrs",dcC:"30–80% 21 min",dcKW:"—",L:4135,W:1805,H:1580,wb:2650,gc:160,wh:"N/A",info:'14.6" + 8.8"',bags:6,v2l:"No",adas:"AEB, FCW, LDW, RCTA, 360° cam, ACC, powered tailgate",warr:"5yr/100k · Batt 8yr/160k",col:"White, Silver, Grey, Cream, Rose",ncap:"—",note:"+100 km range vs Prime. Full ADAS + ACC.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/26/2600/proton-emas-5-69330.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/26/2600/proton-emas-5-69330.jpg")},
+{model:"Wuling Bingo Max",price:"RM 72,800",pn:72800,brand:"Wuling",body:"Hatchback",seats:5,drive:"FWD",power:"68 PS",torque:"150 Nm",bat:"37.9 kWh LFP",range:"~337 km",std:"WLTP",z100:"N/A",top:"~130",acC:"7 kW · 5.5 hrs",dcC:"50 kW · 35 min",dcKW:"50",L:3950,W:1708,H:1580,wb:2560,gc:160,wh:'15" steel',info:'10.25"',bags:6,v2l:"No",adas:"ABS, EBD, ESC — no ADAS",warr:"5yr/150k · Batt 8yr/120k",col:"Blue, White, Purple",ncap:"—",note:"+67 km range vs Pro. Bigger battery, same body.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/188/2626/wuling-bingo-ev-front-angle-low-view-482357.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/188/2626/wuling-bingo-ev-front-angle-low-view-482357.jpg")},
+{model:"Perodua QV-E",price:"RM 80,000+BaaS",pn:80000,brand:"Perodua",body:"Sportback SUV",seats:5,drive:"FWD",power:"204 PS",torque:"285 Nm",bat:"52.5 kWh LFP",range:"445 km",std:"NEDC",z100:"7.5 sec",top:"~165",acC:"6.6 kW · 8 hrs",dcC:"60 kW · 30 min",dcKW:"60",L:4170,W:1800,H:1502,wb:2680,gc:158,wh:'18" alloy',info:'10.25" + 10.25"',bags:6,v2l:"No",adas:"AEB, ACC, TJA, LKA, BSD, 360° cam, CPD",warr:"5yr · BaaS lifetime batt",col:"Ice Blue, Caviar Grey",ncap:"—",note:"⭐ MY's first homegrown EV. Battery leased RM275/mth.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/18/2681/perodua-qv-e-front-angle-low-view-563565.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/18/2681/perodua-qv-e-front-angle-low-view-563565.jpg")},
+{model:"BYD Atto 2",price:"RM 100,000",pn:100000,brand:"BYD",body:"Compact SUV",seats:5,drive:"FWD",power:"177 HP",torque:"290 Nm",bat:"51.13 kWh Blade",range:"350 km",std:"WLTP",z100:"7.9 sec",top:"160",acC:"7 kW · 8 hrs",dcC:"82 kW · 30 min",dcKW:"82",L:4310,W:1830,H:1675,wb:2620,gc:0,wh:'17" alloy',info:'12.8" rot + 8.8"',bags:6,v2l:"3.3 kW",adas:"AEB, ACC, TJA, BSD, RCTA, 360° cam",warr:"6yr/150k · Batt 8yr/160k",col:"White, Grey, Green",ncap:"—",note:"Global RHD debut. Ventilated seats. 400L/1320L boot.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2634/byd-atto-2-95070.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/124/2634/byd-atto-2-front-angle-low-view-212934.jpg")},
+{model:"BYD Seal 6 Dynamic",price:"RM 100,000",pn:100000,brand:"BYD",body:"Sedan",seats:5,drive:"RWD",power:"129 PS",torque:"220 Nm",bat:"56.64 kWh Blade",range:"410 km",std:"WLTP",z100:"10.9 sec",top:"160",acC:"7 kW",dcC:"100 kW · 23 min",dcKW:"100",L:4720,W:1860,H:1495,wb:2820,gc:0,wh:'17" alloy',info:'12.8" rot + 10.25"',bags:6,v2l:"3.7 kW",adas:"AEB, ACC, LDW, BSD, RCTA, 360° cam",warr:"6yr/150k · Batt 8yr/160k",col:"White, Grey, Blue, Green",ncap:"—",note:"Best WLTP range at this price (410 km). RWD. 460L + 65L frunk.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2659/byd-seal-6-84922.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2659/byd-seal-6-84922.jpg")},
+{model:"Neta V EV",price:"RM 100,000",pn:100000,brand:"Neta",body:"Compact SUV",seats:5,drive:"FWD",power:"95 PS",torque:"160 Nm",bat:"38.54 kWh Ternary",range:"380 km",std:"NEDC",z100:"0–50: 3.9s",top:"120",acC:"6.6 kW · 8 hrs",dcC:"100 kW · 30 min",dcKW:"100",L:4070,W:1690,H:1540,wb:2420,gc:0,wh:'16" alloy',info:'14.6" + 12"',bags:2,v2l:"No",adas:"ABS, EBD, ESC, cruise — no ADAS",warr:"5yr/150k · Batt 8yr/180k",col:"White, Blue, Grey, Pink",ncap:"0 stars ⛔",note:"⚠️ ASEAN NCAP 0-star. Grab banned Neta. Only 2 airbags.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/132/1990/neta-v-99689.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/132/1990/neta-v-99689.jpg")},
+{model:"BYD Dolphin Std Range",price:"RM 100,530",pn:100530,brand:"BYD",body:"Hatchback",seats:5,drive:"FWD",power:"95 PS",torque:"180 Nm",bat:"44.9 kWh Blade",range:"340 km",std:"WLTP",z100:"12.3 sec",top:"~150",acC:"7 kW · 9 hrs",dcC:"60 kW · 30 min",dcKW:"60",L:4290,W:1770,H:1570,wb:2700,gc:130,wh:'16" alloy',info:'12.8" rotating + 5"',bags:6,v2l:"3.2 kW",adas:"AEB, ACC, LDA, BSD, RCTA, 360° cam",warr:"6yr/150k · Batt 8yr/160k",col:"Sky Blue",ncap:"—",note:"Iconic rotating screen. BYD Blade LFP. 5-star ANCAP.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/1965/byd-dolphin-30150.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/1965/byd-dolphin-30150.jpg")},
+{model:"Proton e.MAS 7 Prime",price:"RM 103,800",pn:103800,brand:"Proton",body:"C-Seg SUV",seats:5,drive:"FWD",power:"218 PS",torque:"320 Nm",bat:"49.52 kWh LFP",range:"345 km",std:"WLTP",z100:"6.9 sec",top:"175",acC:"11 kW · 4.9 hrs",dcC:"80 kW · 20 min",dcKW:"80",L:4670,W:1900,H:1700,wb:2750,gc:180,wh:'18" aero',info:'15.4" + 10.2"',bags:6,v2l:"3.3 kW",adas:"Lvl 2 ADAS, ICC, ACC, AEB, FCW, RCTA, DOW, TSR",warr:"6yr/unlimited · Batt 8yr/160k",col:"6 colours",ncap:"5 stars ✅",note:"5-star NCAP. CKD. Fastest Proton ever. RM99,800 w/ rebate.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/26/2446/proton-emas-ev-front-angle-low-view-490974.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/26/2446/proton-emas-ev-front-angle-low-view-490974.jpg")},
+{model:"MG 4 EV Standard",price:"RM 103,999",pn:103999,brand:"MG",body:"Hatchback",seats:5,drive:"RWD",power:"170 PS",torque:"250 Nm",bat:"51 kWh LFP",range:"350 km",std:"WLTP",z100:"7.5 sec",top:"160",acC:"7 kW · 8 hrs",dcC:"117 kW · 37 min",dcKW:"117",L:4287,W:1836,H:1504,wb:2705,gc:150,wh:'17" alloy',info:'10.25" + digital',bags:6,v2l:"No",adas:"AEB, LDA, BSD, RCTA, speed assist",warr:"7yr/150k · Batt 8yr/180k",col:"Multiple",ncap:"—",note:"Best 0–100 hatchback. RWD. 117 kW DC. Free 7 kW wallbox.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/105/2074/mg-4-73763.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/105/2074/mg-4-73763.jpg")},
+{model:"Leapmotor B10 Life",price:"RM 107,800",pn:107800,brand:"Leapmotor",body:"C-Seg SUV",seats:5,drive:"RWD",power:"218 PS",torque:"240 Nm",bat:"56.2 kWh LFP",range:"361 km",std:"WLTP",z100:"8.0 sec",top:"N/A",acC:"11 kW · 2.5 hrs",dcC:"140 kW · 20 min",dcKW:"140",L:4515,W:1885,H:1655,wb:2735,gc:170,wh:'18" alloy',info:'15.6" + 10.25"',bags:6,v2l:"No",adas:"AEB, LKA, BSD, CW, cruise",warr:"6yr/150k · Batt 8yr/160k",col:"White, Black, Grey, Purple, Blue",ncap:"—",note:"Stellantis-backed RWD SUV. CKD Gurun. 430L boot.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/172/2672/leapmotor-b10-front-angle-low-view-525108.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/172/2672/leapmotor-b10-front-angle-low-view-525108.jpg")},
+{model:"Ora Good Cat Ultra",price:"RM 109,800",pn:109800,brand:"GWM",body:"Hatchback",seats:5,drive:"FWD",power:"141 hp",torque:"210 Nm",bat:"47.8 kWh LFP",range:"400 km",std:"NEDC",z100:"~8.5 sec",top:"~150",acC:"6.6 kW · 9 hrs",dcC:"30–80% 38 min",dcKW:"—",L:4254,W:1848,H:1603,wb:2650,gc:135,wh:'18" alloy',info:'10.25"',bags:6,v2l:"No",adas:"AEB, ACC, LDA, BSD, RCTA, 360° cam",warr:"5yr/150k · Batt 8yr/180k",col:"Black, Grey",ncap:"—",note:"Neo-retro styling. Panoramic sunroof, heated seats, wireless charger.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/121/1873/gwm-ora-good-cat-90885.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/121/1873/gwm-ora-good-cat-90885.jpg")},
+{model:"BYD M6 Standard",price:"RM 109,800",pn:109800,brand:"BYD",body:"7-Seat MPV",seats:7,drive:"FWD",power:"163 HP",torque:"310 Nm",bat:"55.4 kWh Blade",range:"420 km",std:"NEDC",z100:"10.1 sec",top:"180",acC:"7 kW",dcC:"89 kW · 40 min",dcKW:"89",L:4710,W:1810,H:1690,wb:2800,gc:0,wh:'17" alloy',info:'12.8" rotating + 5"',bags:6,v2l:"Yes",adas:"Cruise only · 360° cam",warr:"6yr/150k · Batt 8yr/160k",col:"White, Blue, Black, Grey",ncap:"—",note:"Only 7-seater under RM120k! 2+3+2. 580L boot. Karaoke mic.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2535/byd-m6-62272.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2535/byd-m6-62272.jpg")},
+{model:"BYD Seal 6 Premium",price:"RM 115,800",pn:115800,brand:"BYD",body:"Sedan",seats:5,drive:"RWD",power:"218 PS",torque:"330 Nm",bat:"56.64 kWh Blade",range:"410 km",std:"WLTP",z100:"7.5 sec",top:"180",acC:"7 kW",dcC:"100 kW · 23 min",dcKW:"100",L:4720,W:1860,H:1495,wb:2820,gc:0,wh:'18" alloy',info:'12.8" rot + 10.25"',bags:6,v2l:"3.7 kW",adas:"AEB, ACC, LDW, BSD, RCTA, 360° cam",warr:"6yr/150k · Batt 8yr/160k",col:"White, Grey, Blue, Green",ncap:"—",note:"Sunroof, vent 8-way seats, 8-speaker, wireless charge. 460L + 65L frunk.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2659/byd-seal-6-84922.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/124/2659/byd-seal-6-84922.jpg")},
+{model:"MG S5 EV LUX CKD",price:"RM 116,900",pn:116900,brand:"MG",body:"SUV",seats:5,drive:"RWD",power:"205 PS",torque:"350 Nm",bat:"62 kWh LFP",range:"446 km",std:"WLTP",z100:"N/A",top:"N/A",acC:"7 kW",dcC:"150 kW · 26 min",dcKW:"150",L:4476,W:1849,H:1621,wb:0,gc:0,wh:'18" alloy',info:'12.3" + 7"',bags:7,v2l:"No",adas:"TJA, ICC, AEB, LKA, BSD, RCTA, 360° cam",warr:"7yr/150k · Batt 8yr/180k",col:"Grey, Silver, Gold",ncap:"5 stars ✅",note:"5-star Euro+ASEAN NCAP. 7 airbags. CKD Pegoh. 150 kW DC.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/105/2590/mg-s5-ev-front-angle-low-view-602622.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/105/2590/mg-s5-ev-front-angle-low-view-602622.jpg")},
+{model:"Leapmotor B10 Design",price:"RM 118,800",pn:118800,brand:"Leapmotor",body:"C-Seg SUV",seats:5,drive:"RWD",power:"218 PS",torque:"240 Nm",bat:"67.1 kWh LFP",range:"434 km",std:"WLTP",z100:"8.0 sec",top:"N/A",acC:"11 kW · 3 hrs",dcC:"168 kW · 20 min",dcKW:"168",L:4515,W:1885,H:1655,wb:2735,gc:170,wh:'18" alloy',info:'15.6" + 10.25"',bags:6,v2l:"No",adas:"AEB, LKA, BSD, CW, ACC · 13-speaker",warr:"6yr/150k · Batt 8yr/160k",col:"White, Black, Grey, Purple, Blue, Silver",ncap:"—",note:"Biggest battery SUV. 168 kW DC fastest. Heated/vent seats.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/172/2672/leapmotor-b10-front-angle-low-view-525108.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/172/2672/leapmotor-b10-front-angle-low-view-525108.jpg")},
+{model:"Ora Good Cat GT",price:"RM 119,800",pn:119800,brand:"GWM",body:"Hatchback",seats:5,drive:"FWD",power:"169 hp",torque:"210 Nm",bat:"57.7 kWh LFP",range:"~500 km",std:"NEDC",z100:"~7.8 sec",top:"~150",acC:"6.6 kW · 9 hrs",dcC:"30–80% 38 min",dcKW:"—",L:4254,W:1848,H:1603,wb:2650,gc:135,wh:'18" alloy',info:'10.25"',bags:6,v2l:"No",adas:"AEB, ACC, LDA, BSD, RCTA, 360° cam",warr:"5yr/150k · Batt 8yr/180k",col:"Black, Grey",ncap:"—",note:"Best hatchback range (~500 km NEDC). Bigger battery. Retro styling.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/121/1873/gwm-ora-good-cat-90885.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/121/1873/gwm-ora-good-cat-90885.jpg")},
+{model:"Proton e.MAS 7 Premium",price:"RM 119,800",pn:119800,brand:"Proton",body:"C-Seg SUV",seats:5,drive:"FWD",power:"218 PS",torque:"320 Nm",bat:"60.22 kWh LFP",range:"410 km",std:"WLTP",z100:"7.1 sec",top:"175",acC:"11 kW · 6.1 hrs",dcC:"100 kW · 20 min",dcKW:"100",L:4670,W:1900,H:1700,wb:2750,gc:180,wh:'19" aero',info:'15.4" + 10.2" + HUD',bags:6,v2l:"3.3 kW",adas:"Full Lvl 2 + EMA, FCTA, ALCA · Sunroof · Vent seats",warr:"6yr/unlimited · Batt 8yr/160k",col:"6+ colours",ncap:"5 stars ✅",note:"5-star NCAP. +65 km over Prime. Sunroof, HUD, 16-speaker.",eI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/26/2446/proton-emas-ev-front-angle-low-view-490974.jpg"),iI:px("https://imgcdn.zigwheels.my/large/gallery/exterior/26/2446/proton-emas-ev-front-angle-low-view-490974.jpg")},
+{model:"Neta X 400 Comfort",price:"RM 119,888",pn:119888,brand:"Neta",body:"SUV",seats:5,drive:"FWD",power:"161 hp",torque:"210 Nm",bat:"52.49 kWh LFP",range:"323 km",std:"WLTP",z100:"9.5 sec",top:"150",acC:"6.6 kW · 9 hrs",dcC:"65 kW · 30 min",dcKW:"65",L:4619,W:1860,H:1628,wb:2770,gc:156,wh:'18" alloy',info:'15.6" + 8.9"',bags:6,v2l:"3.3 kW",adas:"FCW, AEB, TSR, LKA, DMS, TJA (no ACC)",warr:"5yr/150k · Batt 8yr/180k",col:"White, Grey, Black, Blue, Brown",ncap:"—",note:"Largest SUV here. V2L. 508L boot. No ACC on Comfort.",eI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/132/2395/neta-x-45288.jpg"),iI:px("https://imgcdn.zigwheels.my/medium/gallery/exterior/132/2395/neta-x-45288.jpg")}
+];
+
+const SECS=[
+  {l:"⚡ Powertrain",f:["drive","power","torque","z100","top"]},
+  {l:"🔋 Battery",f:["bat","range","acC","dcC"]},
+  {l:"📐 Dimensions",f:["dim","wh"]},
+  {l:"🖥 Tech & Safety",f:["info","bags","adas"]},
+  {l:"📋 Ownership",f:["warr","col"]}
+];
+const FLAB={drive:"Drive",power:"Power",torque:"Torque",z100:"0–100",top:"Top Speed",bat:"Battery",range:"Range",acC:"AC Charge",dcC:"DC Fast",dim:"Dimensions",wh:"Wheels",info:"Screen",bags:"Airbags",adas:"ADAS",warr:"Warranty",col:"Colours"};
+
+let sel=0, openSec=null;
+
+function switchTab(t){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===(t==='cards'?0:1)));
+  document.getElementById('cards-panel').classList.toggle('active',t==='cards');
+  document.getElementById('table-panel').classList.toggle('active',t==='table');
+  if(t==='table') renderTable();
+}
+
+function selectCar(i){sel=i;openSec=null;renderCards();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleSec(i){openSec=openSec===i?null:i;renderCards();}
+
+function imgHtml(src,label){
+  const id='img'+Math.random().toString(36).slice(2,8);
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const img=el.querySelector('img');
+    if(img){
+      img.onload=()=>{el.querySelector('.loading')&&(el.querySelector('.loading').style.display='none');img.style.display='block'};
+      img.onerror=()=>{el.querySelector('.loading')&&(el.querySelector('.loading').style.display='none');el.querySelector('.fallback')&&(el.querySelector('.fallback').style.display='flex')};
+    }
+  },50);
+  return`<div class="photo-wrap" id="${id}">
+    <div class="loading">loading…</div>
+    <div class="fallback" style="display:none">${label==='Exterior'?'🚘':'🪑'}<span>${label}</span></div>
+    <img src="${src}" alt="${label}" style="display:none">
+    <div class="tag">${label}</div>
+  </div>`;
+}
+
+function renderCards(){
+  const c=cars[sel], clr=BC[c.brand]||'#444';
+  const noteClass=c.note.startsWith('⚠️')?'warn':c.note.startsWith('⭐')?'star':'info';
+  let dim=`${c.L}×${c.W}×${c.H}`;
+  if(c.wb)dim+=` · WB${c.wb}`;
+  if(c.gc)dim+=` · GC${c.gc}`;
+  c.dim=dim;
+
+  let secHtml='';
+  SECS.forEach((s,si)=>{
+    const isOpen=openSec===si;
+    secHtml+=`<button class="acc-btn${isOpen?' open':''}" onclick="toggleSec(${si})"><span>${s.l}</span><span class="acc-icon" style="color:${clr}">${isOpen?'−':'+'}</span></button>`;
+    if(isOpen){
+      secHtml+='<div class="acc-body">';
+      s.f.forEach(k=>{secHtml+=`<div class="acc-row"><div class="ak">${FLAB[k]||k}</div><div class="av">${c[k]||'N/A'}</div></div>`});
+      secHtml+='</div>';
+    }
+  });
+
+  let ncapHtml='';
+  if(c.ncap&&c.ncap!=='—'){
+    const bad=c.ncap.includes('0');
+    ncapHtml=`<div class="ncap-bar ${bad?'bad':'good'}">${c.ncap}</div>`;
+  }
+
+  let listHtml='';
+  cars.forEach((x,i)=>{
+    listHtml+=`<div class="carlist-item${sel===i?' active':''}" onclick="selectCar(${i})">
+      <div class="carlist-thumb"><img src="${x.eI}" alt="" onerror="this.style.display='none'"></div>
+      <div style="flex:1;min-width:0">
+        <div class="carlist-name" style="font-weight:${sel===i?700:500};color:${sel===i?(BC[x.brand]||'#333'):'#111'}">${x.model}</div>
+        <div class="carlist-sub">${x.body} · ${x.power} · ${x.range}</div>
+      </div>
+      <div class="carlist-price" style="color:${BC[x.brand]||'#333'}">${x.price}</div>
+    </div>`;
+  });
+
+  let pillsHtml='';
+  cars.forEach((x,i)=>{
+    pillsHtml+=`<button class="pill${sel===i?' active':''}" style="${sel===i?'background:'+BC[x.brand]:''}" onclick="selectCar(${i})">${x.brand} <span style="font-weight:400;opacity:.8">${x.price}</span></button>`;
+  });
+
+  document.getElementById('cards-panel').innerHTML=`
+    <div class="car-pills">${pillsHtml}</div>
+    <div class="card">
+      <div class="card-hdr" style="background:${clr}">
+        <div><div class="lbl">${c.brand} · ${c.body} · ${c.seats} seats</div><div class="name">${c.model}</div></div>
+        <div class="price"><small>OTR</small>${c.price}</div>
+      </div>
+      <div class="photos">${imgHtml(c.eI,'Exterior')}${imgHtml(c.iI,'Interior')}</div>
+      <div class="qstats">
+        <div><div class="ql">Power</div><div class="qv">${c.power}</div></div>
+        <div><div class="ql">Range</div><div class="qv">${c.range}</div></div>
+        <div><div class="ql">0–100</div><div class="qv">${c.z100}</div></div>
+        <div><div class="ql">Drive</div><div class="qv">${c.drive}</div></div>
+      </div>
+      <div class="note-bar ${noteClass}">${c.note}</div>
+      ${ncapHtml}
+      ${secHtml}
+    </div>
+    <div class="carlist">
+      <div class="carlist-hdr">All ${cars.length} Variants · Tap to switch</div>
+      ${listHtml}
+    </div>
+    <div class="footer">Photos via Zigwheels.my CDN (proxied) · Prices OTR w/o insurance · *QV-E body-only, battery RM275/mth BaaS · May 2026</div>
+  `;
+}
+
+// === TABLE ===
+const TBL_COLS=[
+  {k:'brand',l:'Brand',w:70},{k:'model',l:'Model',w:150,sticky:true},{k:'price',l:'Price',w:100},
+  {k:'body',l:'Body',w:90},{k:'seats',l:'Seats',w:45},{k:'drive',l:'Drive',w:45},
+  {k:'power',l:'Power',w:65},{k:'torque',l:'Torque',w:70},{k:'bat',l:'Battery',w:140},
+  {k:'range',l:'Range',w:80},{k:'std',l:'Std',w:50},{k:'z100',l:'0–100',w:80},
+  {k:'top',l:'Top km/h',w:60},{k:'acC',l:'AC Charge',w:120},{k:'dcC',l:'DC Charge',w:110},
+  {k:'L',l:'Length',w:60},{k:'W',l:'Width',w:60},{k:'H',l:'Height',w:60},
+  {k:'wb',l:'WB',w:55},{k:'gc',l:'GC',w:45},{k:'wh',l:'Wheels',w:90},
+  {k:'info',l:'Screen',w:150},{k:'bags',l:'Airbags',w:55},{k:'v2l',l:'V2L',w:60},
+  {k:'ncap',l:'NCAP',w:90},{k:'warr',l:'Warranty',w:180}
+];
+let sortKey='pn',sortDir=1;
+
+function tblSort(k){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}renderTable();}
+
+function renderTable(){
+  const sorted=[...cars].sort((a,b)=>{
+    let av=a[sortKey],bv=b[sortKey];
+    if(av==null)return 1;if(bv==null)return -1;
+    if(typeof av==='string'&&typeof bv==='string')return sortDir*av.localeCompare(bv);
+    return sortDir*(av>bv?1:av<bv?-1:0);
+  });
+  const maxBags=Math.max(...cars.map(c=>c.bags));
+  const minBags=Math.min(...cars.map(c=>c.bags));
+  const minPn=Math.min(...cars.map(c=>c.pn));
+  const maxPn=Math.max(...cars.map(c=>c.pn));
+
+  let thHtml='<tr>';
+  TBL_COLS.forEach(col=>{
+    const cls=col.sticky?'sticky-hdr':'';
+    const arrow=sortKey===col.k?(sortDir===1?' ▲':' ▼'):' ⇅';
+    thHtml+=`<th class="${cls}" style="min-width:${col.w}px" onclick="tblSort('${col.k}')">${col.l}${arrow}</th>`;
+  });
+  thHtml+='</tr>';
+
+  let trHtml='';
+  sorted.forEach((c,ri)=>{
+    trHtml+='<tr>';
+    TBL_COLS.forEach(col=>{
+      let val=c[col.k]??'—';
+      let cls=col.sticky?'sticky-col':'';
+      if(col.k==='bags'){
+        if(c.bags===maxBags)cls+=' best-cell';
+        if(c.bags===minBags&&minBags<6)cls+=' worst-cell';
+        if(c.bags<=2)val=c.bags+' ⚠️';
+      }
+      if(col.k==='pn'&&c.pn===minPn)cls+=' best-cell';
+      if(col.k==='brand')val=`<span style="font-weight:700;color:${BC[c.brand]||'#333'}">${val}</span>`;
+      if(col.k==='model')val=`<span style="font-weight:600">${val}</span>`;
+      if(col.k==='price')val=`<b style="color:${BC[c.brand]}">${val}</b>`;
+      if(col.k==='drive')val=`<span style="font-weight:600;color:${c.drive==='RWD'?'#b30000':'#003087'}">${val}</span>`;
+      if(col.k==='v2l')val=`<span style="color:${c.v2l==='No'?'#aaa':'#059669'};font-weight:${c.v2l!=='No'?600:400}">${val}</span>`;
+      if(col.k==='ncap'&&c.ncap.includes('0'))val=`<span style="color:#c00;font-weight:700">${val}</span>`;
+      else if(col.k==='ncap'&&c.ncap.includes('5'))val=`<span style="color:#059669;font-weight:700">${val}</span>`;
+      if((col.k==='L'||col.k==='W'||col.k==='H'||col.k==='wb'||col.k==='gc')&&val===0)val='—';
+      trHtml+=`<td class="${cls}" style="min-width:${col.w}px;font-size:10px">${val}</td>`;
+    });
+    trHtml+='</tr>';
+  });
+
+  document.getElementById('table-panel').innerHTML=`
+    <div class="legend">
+      <div><span class="legend-dot" style="background:rgba(5,150,105,.18)"></span>Best value</div>
+      <div><span class="legend-dot" style="background:rgba(220,38,38,.14)"></span>Worst value</div>
+      <div>RWD = <span style="color:#b30000;font-weight:700">red</span> · FWD = <span style="color:#003087;font-weight:700">blue</span></div>
+      <div>*QV-E RM80k body-only, battery RM275/mth BaaS</div>
+    </div>
+    <div class="tbl-wrap"><table class="tbl"><thead>${thHtml}</thead><tbody>${trHtml}</tbody></table></div>
+    <div class="footer" style="margin-top:12px">Sources: Zigwheels.my · Paul Tan · SoyaCincau · AutoBuzz · Official sites · Prices OTR w/o insurance, Peninsular MY · May 2026</div>
+  `;
+}
+
+// init
+renderCards();
+</script>
+</body>
+</html>
